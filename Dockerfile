@@ -4,7 +4,7 @@ MAINTAINER Andrew Holgate <andrewholgate@yahoo.com>
 RUN apt-get update
 RUN apt-get -y upgrade
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install curl apache2 mysql-client supervisor php5 php5-cli libapache2-mod-php5 php5-gd php5-json php5-mysql openssh-client rsyslog make libpcre3-dev php-pear php5-curl software-properties-common
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install curl apache2 mysql-client supervisor php5 php5-cli libapache2-mod-php5 php5-gd php5-json php5-mysql openssh-client rsyslog make libpcre3-dev php-pear php5-curl software-properties-common php5-dev
 
 # Install latest git version.
 RUN add-apt-repository -y ppa:git-core/ppa
@@ -26,7 +26,8 @@ RUN chown -R ubuntu:ubuntu /home/ubuntu
 
 # Install Uploadprogress
 RUN pecl install uploadprogress
-RUN echo "extension=uploadprogress.so" >> /etc/php5/apache2/conf.d/20-uploadprogress.ini
+COPY uploadprogress.ini /etc/php5/mods-available/uploadprogress.ini
+RUN ln -s ../../mods-available/uploadprogress.ini /etc/php5/apache2/conf.d/20-uploadprogress.ini
 
 # Install Composer
 ENV COMPOSER_HOME /home/ubuntu/.composer
@@ -79,7 +80,9 @@ RUN ln -s /var/log/apache2/error.log /var/www/log/
 RUN ln -s /var/log/apache2/access.log /var/www/log/
 RUN ln -s /var/log/drupal.log /var/www/log/
 RUN ln -s /var/log/syslog /var/www/log/
-RUN echo "alias taillog='tail -f /var/www/log/drupal.log /var/www/log/error.log /var/www/log/syslog'" >> ~/.bashrc
+USER ubuntu
+RUN echo "alias taillog='tail -f /var/www/log/syslog /var/www/log/*.log'" >> ~/.bashrc
+USER root
 
 # Need to install OpCache GUI, such as https://github.com/PeeHaa/OpCacheGUI
 

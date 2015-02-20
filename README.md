@@ -2,7 +2,7 @@
 
 This base Ubuntu 14.04 docker container comes configured with tools for Drupal 7 and Drupal 8 projects.
 
-When developing, this project should be used in conjunction with [docker-drupal-ubuntu-dev](https://github.com/andrewholgate/docker-drupal-ubuntu-dev)
+When developing, this project should be used in conjunction with [docker-drupal-ubuntu14.04-dev](https://github.com/andrewholgate/docker-drupal-ubuntu14.04-dev)
 
 # Included Tools
 
@@ -22,7 +22,7 @@ When developing, this project should be used in conjunction with [docker-drupal-
 
 ```bash
 # Build database image based off MySQL 5.5
-sudo docker run -d --name mysql-drupal mysql:5.5 --entrypoint /bin/echo MySQL data-only container for Drupal MySQL
+sudo docker run -d --name mysql-drupal-ubuntu14 mysql:5.5 --entrypoint /bin/echo MySQL data-only container for Drupal MySQL
 ```
 
 ## Build Drupal Base Image
