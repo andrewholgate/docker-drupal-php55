@@ -2,6 +2,7 @@ drupalubuntu14web:
   build: .
   ports:
     - "81:80"
+    - "444:443"
   links:
    - drupaldb:database
 drupaldb:

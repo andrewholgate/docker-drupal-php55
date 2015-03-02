@@ -32,7 +32,7 @@ sudo docker run -d --name mysql-drupal-ubuntu14 mysql:5.5 --entrypoint /bin/echo
 git clone https://github.com/andrewholgate/docker-drupal-ubuntu14.04.git
 # Build docker image
 cd docker-drupal-ubuntu14.04
-sudo docker build --rm=true --tag="drupal-ubuntu14.04" .
+sudo docker build --rm=true --tag="drupal-ubuntu14.04" . | tee ./build.log
 ```
 
 ## Build Project using fig
