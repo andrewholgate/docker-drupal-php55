@@ -1,17 +1,17 @@
-drupalubuntu14web:
+drupalphp55web:
   build: .
   ports:
     - "81:80"
     - "444:443"
   links:
-   - drupaldb:database
-drupaldb:
+   - drupalphp55db:database
+drupalphp55db:
   image: mysql:5.5
   volumes_from:
-    - mysql-drupal-ubuntu14
+    - mysql-drupal-php55
   environment:
     TERM: xterm
     MYSQL_ROOT_PASSWORD: password
     MYSQL_USER: user
     MYSQL_PASSWORD: password
-    MYSQL_DATABASE: drupal
+    MYSQL_DATABASE: drupalphp55

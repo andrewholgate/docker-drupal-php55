@@ -1,19 +1,22 @@
 # About
 
-This base Ubuntu 14.04 docker container comes configured with tools for Drupal 7 and Drupal 8 projects.
+Dockerised Drupal 6 & 7 environment image using PHP 5.5 on Ubuntu 14.04 and configured with Drupal tools.
 
-When developing, this project should be used in conjunction with [docker-drupal-ubuntu14.04-dev](https://github.com/andrewholgate/docker-drupal-ubuntu14.04-dev)
+When developing, this project should be used in conjunction with [docker-drupal-php55-dev](https://github.com/andrewholgate/docker-drupal-php55-dev)
 
 # Included Tools
 
-- [Linux troubleshooting tools](http://www.linuxjournal.com/magazine/hack-and-linux-troubleshooting-part-i-high-load)
-- PHP 5.5.x with production settings
-- [git](http://git-scm.com/) (latest version)
-- [Composer](https://getcomposer.org/)
-- [Drush](https://github.com/drush-ops/drush)
-- Apache configured for HTTP & HTTPS and with minimal modules installed
+- Apache with PHP-FPM + Event MPM configured for HTTP & HTTPS and with minimal modules installed.
 - MySQL client
-- Syslog and common log directory
+- PHP 5.5.x with production settings.
+- [Redis 3.x](http://redis.io/)
+- [Linux troubleshooting tools](http://www.linuxjournal.com/magazine/hack-and-linux-troubleshooting-part-i-high-load)
+- [git](http://git-scm.com/) (latest version)
+- [Composer](https://getcomposer.org/) - PHP dependency management.
+- [Drush 7](https://github.com/drush-ops/drush) - execute Drupal commands via the command line.
+- [Drupal Console](https://www.drupal.org/project/console) - an alternative to drush.
+- [NodeJS](https://nodejs.org/) - Javascript runtime.
+- Rsyslog and common log directory
 - Guest user (`ubuntu`)
 
 # Installation
@@ -22,22 +25,27 @@ When developing, this project should be used in conjunction with [docker-drupal-
 
 ```bash
 # Build database image based off MySQL 5.5
-sudo docker run -d --name mysql-drupal-ubuntu14 mysql:5.5 --entrypoint /bin/echo MySQL data-only container for Drupal MySQL
+sudo docker run -d --name mysql-drupal-php55 mysql:5.5 --entrypoint /bin/echo MySQL data-only container for Drupal PHP 5.5 MySQL
 ```
 
 ## Build Drupal Base Image
 
 ```bash
 # Clone Drupal docker repository
-git clone https://github.com/andrewholgate/docker-drupal-ubuntu14.04.git
+git clone https://github.com/andrewholgate/docker-drupal-php55.git
+cd docker-drupal-php55
+
 # Build docker image
-cd docker-drupal-ubuntu14.04
-sudo docker build --rm=true --tag="drupal-ubuntu14.04" . | tee ./build.log
+sudo docker build --rm=true --tag="drupal-php55" . | tee ./build.log
 ```
 
 ## Build Project using Docker Compose
 
 ```bash
+# Customise docker-compose.yml configurations for environment.
+cp docker-compose.yml.dist docker-compose.yml
+vim docker-compose.yml
+
 # Build docker containers using Docker Compose.
 sudo docker-compose build
 sudo docker-compose up -d
@@ -50,8 +58,8 @@ From the host server, add the web container IP address to the hosts file.
 ```bash
 # Add IP address to hosts file.
 sudo bash -c "echo $(sudo docker inspect -f '{{ .NetworkSettings.IPAddress }}' \
-dockerdrupalubuntu1404_drupalubuntu14web_1) \
-drupal.example.com \
+dockerdrupalphp55_drupalphp55web_1) \
+drupalphp55.example.com \
 >> /etc/hosts"
 ```
 
@@ -59,5 +67,5 @@ drupal.example.com \
 
 ```bash
 # Using the container name of the web frontend.
-sudo docker exec -it dockerdrupalubuntu1404_drupalubuntu14web_1 su - ubuntu
+sudo docker exec -it dockerdrupalphp55_drupalphp55web_1 su - ubuntu
 ```
