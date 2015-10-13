@@ -6,23 +6,21 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu trusty multiverse" >> /etc/apt/so
     echo "deb http://archive.ubuntu.com/ubuntu trusty-updates multiverse" >> /etc/apt/sources.list && \
     echo "deb http://security.ubuntu.com/ubuntu trusty-security universe multiverse" >> /etc/apt/sources.list
 
-RUN apt-get update && \
-    apt-get -y upgrade
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install curl apache2 mysql-client supervisor php5 libapache2-mod-fastcgi php5-fpm apache2-mpm-event php5-gd php5-mysql php-pear php5-curl php5-dev openssh-client make libpcre3-dev software-properties-common
 
 # I/O, Network Other useful troubleshooting tools, see: http://www.linuxjournal.com/magazine/hack-and-linux-troubleshooting-part-i-high-load
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install sysstat iotop htop ethtool nmap dnsutils traceroute wget nano
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install wget nano vim sysstat iotop htop ethtool nmap dnsutils traceroute
 
 # Install latest git version.
 RUN add-apt-repository -y ppa:git-core/ppa && \
-    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install git
 
 # Add ubuntu user.
-RUN useradd -ms /bin/bash ubuntu && \
-    ln -s /var/www /home/ubuntu/www && \
-    chown -R ubuntu:ubuntu /home/ubuntu
+RUN useradd -ms /bin/bash ubuntu
 
 # Configure Apache
 COPY default.conf /etc/apache2/sites-available/default.conf
@@ -57,13 +55,6 @@ RUN echo "export COMPOSER_HOME=/home/ubuntu/.composer" >> /etc/bash.bashrc && \
     curl -sS https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer
 
-# Install Drush.
-USER ubuntu
-WORKDIR /home/ubuntu/
-RUN composer global require drush/drush:7.*
-COPY drushrc.php /home/ubuntu/.drush/drushrc.php
-
-USER root
 # Add tools installed via composer to PATH and Drupal logs to syslog
 RUN echo "export PATH=/home/ubuntu/.composer/vendor/bin:$PATH" >> /etc/bash.bashrc && \
     echo "local0.* /var/log/drupal.log" >> /etc/rsyslog.conf
@@ -89,37 +80,26 @@ RUN mkdir -p /var/www/log && \
 # Need to install OpCache GUI, such as https://github.com/PeeHaa/OpCacheGUI
 
 # Set user ownership
-RUN chown -R ubuntu:ubuntu /home/ubuntu/
-
-# Install Node 12.4
-RUN cd /opt && \
-  wget http://nodejs.org/dist/v0.12.4/node-v0.12.4-linux-x64.tar.gz && \
-  tar -xzf node-v0.12.4-linux-x64.tar.gz && \
-  mv node-v0.12.4-linux-x64 node && \
-  cd /usr/local/bin && \
-  ln -s /opt/node/bin/* . && \
-  rm -f /opt/node-v0.12.4-linux-x64.tar.gz
+RUN ln -s /var/www /home/ubuntu/www && \
+    chown -R ubuntu:ubuntu /home/ubuntu/
 
 # Install Redis
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install tcl8.5
-RUN wget http://download.redis.io/releases/redis-3.0.1.tar.gz && \
-    tar xvzf redis-3.0.1.tar.gz && \
-    rm redis-3.0.1.tar.gz && \
-    cd redis-3.0.1 && \
+RUN wget http://download.redis.io/releases/redis-3.0.3.tar.gz && \
+    tar xvzf redis-3.0.3.tar.gz && \
+    rm redis-3.0.3.tar.gz && \
+    cd redis-3.0.3 && \
     make && \
     make test && \
     make install && \
-    rm -Rf ../redis-3.0.1 && \
+    rm -Rf ../redis-3.0.3 && \
     mkdir /var/log/redis
 
+# Activate globstar for bash and add alias to tail log files.
 USER ubuntu
 RUN echo "alias taillog='tail -f /var/www/log/syslog /var/log/redis/stdout.log /var/www/log/*.log'" >> ~/.bashrc && \
-    echo 'export PATH="$PATH:$HOME/.npm-packages/bin"' >> ~/.bashrc && \
-    npm config set prefix '~/.npm-packages'
+    echo "shopt -s globstar" >> ~/.bashrc
 USER root
-
-# Fix Permissions script for correct Drupal permissioning.
-COPY fix-permissions.sh /var/www/fix-permissions.sh
 
 # Supervisor
 RUN mkdir -p /var/log/supervisor

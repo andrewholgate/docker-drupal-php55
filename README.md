@@ -13,9 +13,6 @@ When developing, this project should be used in conjunction with [docker-drupal-
 - [Linux troubleshooting tools](http://www.linuxjournal.com/magazine/hack-and-linux-troubleshooting-part-i-high-load)
 - [git](http://git-scm.com/) (latest version)
 - [Composer](https://getcomposer.org/) - PHP dependency management.
-- [Drush 7](https://github.com/drush-ops/drush) - execute Drupal commands via the command line.
-- [Drupal Console](https://www.drupal.org/project/console) - an alternative to drush.
-- [NodeJS](https://nodejs.org/) - Javascript runtime.
 - Rsyslog and common log directory
 - Guest user (`ubuntu`)
 
