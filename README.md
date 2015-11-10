@@ -1,13 +1,13 @@
 # About
 
-Dockerised Drupal 6 & 7 environment image using PHP 5.5 on Ubuntu 14.04 and configured with Drupal tools.
+Dockerised Drupal container using PHP 5.5 on Ubuntu 14.04 and configured with Drupal tools.
 
-When developing, this project should be used in conjunction with [docker-drupal-php55-dev](https://github.com/andrewholgate/docker-drupal-php55-dev)
+For example of how to use this container, see [docker-drupal-project-example](https://github.com/andrewholgate/docker-drupal-project-example)
 
 # Included Tools
 
 - Apache with PHP-FPM + Event MPM configured for HTTP & HTTPS and with minimal modules installed.
-- MySQL client
+- MySQL 5.6 client
 - PHP 5.5.x with production settings.
 - [Redis 3.x](http://redis.io/)
 - [Linux troubleshooting tools](http://www.linuxjournal.com/magazine/hack-and-linux-troubleshooting-part-i-high-load)
@@ -21,8 +21,8 @@ When developing, this project should be used in conjunction with [docker-drupal-
 ## Create Presistant Database data-only container
 
 ```bash
-# Build database image based off MySQL 5.5
-sudo docker run -d --name mysql-drupal-php55 mysql:5.5 --entrypoint /bin/echo MySQL data-only container for Drupal PHP 5.5 MySQL
+# Build database image based off MySQL 5.6
+sudo docker run -d --name mysql-drupal-php55 mysql:5.6 --entrypoint /bin/echo MySQL data-only container for Drupal PHP 5.5 MySQL
 ```
 
 ## Build Drupal Base Image

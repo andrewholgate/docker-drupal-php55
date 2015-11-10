@@ -79,27 +79,25 @@ RUN mkdir -p /var/www/log && \
 
 # Need to install OpCache GUI, such as https://github.com/PeeHaa/OpCacheGUI
 
-# Set user ownership
-RUN ln -s /var/www /home/ubuntu/www && \
-    chown -R ubuntu:ubuntu /home/ubuntu/
-
 # Install Redis
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install tcl8.5
-RUN wget http://download.redis.io/releases/redis-3.0.3.tar.gz && \
-    tar xvzf redis-3.0.3.tar.gz && \
-    rm redis-3.0.3.tar.gz && \
-    cd redis-3.0.3 && \
+RUN wget http://download.redis.io/releases/redis-3.0.5.tar.gz && \
+    tar xvzf redis-3.0.5.tar.gz && \
+    rm redis-3.0.5.tar.gz && \
+    cd redis-3.0.5 && \
     make && \
     make test && \
     make install && \
-    rm -Rf ../redis-3.0.3 && \
+    rm -Rf ../redis-3.0.5 && \
     mkdir /var/log/redis
 
 # Activate globstar for bash and add alias to tail log files.
-USER ubuntu
-RUN echo "alias taillog='tail -f /var/www/log/syslog /var/log/redis/stdout.log /var/www/log/*.log'" >> ~/.bashrc && \
-    echo "shopt -s globstar" >> ~/.bashrc
-USER root
+RUN echo "alias taillog='tail -f /var/www/log/syslog /var/log/redis/stdout.log /var/www/log/*.log'" >> /home/ubuntu/.bash_aliases && \
+    echo "shopt -s globstar" >> /home/ubuntu/.bashrc
+
+# Set user ownership
+RUN ln -s /var/www /home/ubuntu/www && \
+    chown -R ubuntu:ubuntu /home/ubuntu/ /home/ubuntu/.*
 
 # Supervisor
 RUN mkdir -p /var/log/supervisor
@@ -111,6 +109,6 @@ RUN chmod +x /usr/local/bin/run
 # Clean-up installation.
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean && apt-get autoremove
 
-EXPOSE 80 443 22
+EXPOSE 80 443
 
 ENTRYPOINT ["/usr/local/bin/run"]

@@ -6,7 +6,7 @@ drupalphp55web:
   links:
    - drupalphp55db:database
 drupalphp55db:
-  image: mysql:5.5
+  image: mysql:5.6
   volumes_from:
     - mysql-drupal-php55
   environment:
